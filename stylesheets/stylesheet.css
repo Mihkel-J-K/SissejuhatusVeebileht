@@ -1,0 +1,96 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    overflow-x: hidden; /* Disable horizontal scrolling */
+}
+
+a{
+    text-decoration: none;
+}
+
+img{
+    width: 300px;
+    height:300px;
+
+}
+/* Siit algab NAV BAR */
+
+nav{
+    background-color: lightgrey;
+    padding: 20px 0px;
+
+    /* See osa on, et nav bar liiguks page-ga kaasa */
+    position: fixed;
+    width:100%;
+    z-index: 10;
+}
+
+nav ul{
+    list-style-type: none;
+    text-align: center;
+
+}nav ul li {
+    /* See paneb elemendid järjestiku ja marginiga saan nede vahet muuta */
+    display: inline;
+    margin: 0 20px;
+}
+
+nav ul li a{
+    display: inline-block;
+    color: black;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    background-color: #575757;
+}
+
+
+/* Siit algab HEADER*/
+
+header{
+    text-align: center;
+    padding: 20px 20px;
+    width: 100%;
+    height: 400px;
+
+    /* Siin lisan tagatausta ja katsetan opacitiga veel */
+    background-image: url("../Pildid/Home_page_pildid/minesweeper_untouched.png");
+    background-color: rgba(0, 0, 0, 0);
+    background-blend-mode: overlay;
+    background-size: cover;
+
+    /* see on, et nav bar ei oleks headeri peal */
+    position: relative;
+    margin-top: 65px;
+
+    /* boarder */
+    border-bottom: solid 10px darkgrey;
+    border-top:solid 15px darkgrey ;
+}
+ 
+
+header h1{
+    color: black;
+    background-color: darkgrey;
+    margin-top: 30px;
+}
+
+/* Siit algab MAIN*/
+main{
+    background-color: #575757;
+    padding: 20px 20px;
+    color: aliceblue;
+}
+
+/* Siit algab FOOTER*/
+
+footer{
+    padding: 20px 20px;
+    background-color: lightgrey;
+}
+
