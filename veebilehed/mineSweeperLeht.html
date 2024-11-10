@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../stylesheets/mineSweeper.css">
+    <title>MineSweeper!</title>
+  </head>
+  <body>
+    <div class="outer-line">
+      <div class="center" id="app">
+        <table class="matrix">
+            <button class="reset-and-flag" @click="flagged()">Flag button</button>
+            <tr v-for="row in matrix" :key="row">
+                <td v-for="cell in row" ::key="cell">
+                    <!-- TODO Vana kood, peab uuega seostama -->
+                    <!-- <button v-if="{{cell}} == a" class="matrix-" @click="returnPressed({{ outer_loop.index }}, {{ loop.index }})">0</button> -->
+                    <!-- <button v-else-if="{{cell}} == 10" class="matrix-10" @click="returnPressed({{ outer_loop.index }}, {{ loop.index }})">0</button> -->
+                    <button :class="['cell', `matrix-${cell}`]" disabled>{{cell}}</button>
+                </td>
+            </tr>
+        </table>
+        <button class="reset-and-flag" @click="refresh">Refresh</button>
+      </div>  
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const app = Vue.createApp({
+            data() {
+            return {
+                matrix: [],
+                flagged: false,
+            };
+            },
+            methods: {
+            //TODO peaks tegema programmi mis ehitaks ise maatriksi mitte random testimiseks
+            generateRandomMatrix(rows, cols, min, max) {
+                return Array.from({ length: rows }, () =>
+                Array.from({ length: cols }, () => Math.floor(Math.random() * (max - min + 1)) + min)
+                );
+            },
+            //TODO flagged()
+            },
+
+            created() {
+            this.matrix = this.generateRandomMatrix(25, 25, 0, 9);
+            },
+        });
+
+        app.mount('#app');
+        });
+    </script>
+  </body>
+</html>
