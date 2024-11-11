@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tutorial</title>
+    <link rel="stylesheet" href="../stylesheets/mineSweeper.css" >
+</head>
+<body>
+    <div class="outer-line">
+        <div class="center" id="app">
+            <h1>WELCOME TO...</h1>
+            <h2>MINESWEEPER</h2>
+            <button v-if="buttonClicks === 0" @click="buttonClick" class="button-tutorial">ENTER AT YOUR OWN DISCRETION</button>
+            <button v-if="buttonClicks === 1" @click="buttonClick" class="button-tutorial">ARE YOU SURE?</button>
+            <button v-if="buttonClicks === 2" @click="buttonClick" class="button-tutorial">REAAALY?</button>
+            <button v-if="buttonClicks === 3" @click="redirect" class="button-tutorial">ok, it's just minesweeper</button>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque, veritatis nulla tenetur expedita accusantium cum sed, debitis exercitationem natus quia impedit dolores vel illum numquam vitae repellendus dicta, harum delectus.</p>
+        </div>  
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const app = Vue.createApp({
+            data() {
+            return {
+                buttonClicks: 0,
+            };
+            },
+            methods: {
+                buttonClick () {
+                    this.buttonClicks += 1;
+                },
+                redirect () {
+                    window.location = "mineSweeperLeht.html"
+                }
+            },
+        });
+        app.mount('#app');
+        });
+    </script>
+</body>
+
+</html>
