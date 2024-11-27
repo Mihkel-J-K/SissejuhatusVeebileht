@@ -127,12 +127,16 @@ button {
   color: rgba(0,0,0,0);
 }
 
+.matrix-11 {
+  background-color: aliceblue;
+  color: rgba(0,0,0,0);
+}
 .matrix- {
   background-color: grey;
   color: rgba(0,0,0,0);
 }
 
-.reset-and-flag {
+.reset-and-flag-false {
   background-color:rgb(188, 4, 4);
   padding: 0.5rem;
   border-style: solid;
@@ -142,6 +146,27 @@ button {
   font-size: 1rem;
 }
 
-.reset-and-flag:hover{
+.reset-and-flag-false:hover{
   background-color: rgb(144, 0, 0);
+}
+
+.reset-and-flag-true {
+  background-color:rgb(0, 29, 188);
+  padding: 0.5rem;
+  border-style: solid;
+  margin: 1rem;
+  border-width: 0.5rem;
+  border-color: aliceblue;
+  font-size: 1rem;
+}
+
+.reset-and-flag-true:hover{
+  background-color: rgb(0, 29, 144);
+}
+
+.gameover{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
