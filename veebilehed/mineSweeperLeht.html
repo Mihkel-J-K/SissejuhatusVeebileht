@@ -22,7 +22,7 @@
             </tr>
         </table>
         <h1 v-if="gameOver" class="gameover">GAME OVER</h1>
-        <button class="reset-and-flag-false" @click="refresh(25,25)">Refresh</button>
+        <button class="reset-and-flag-false" @click="refresh()">Refresh</button>
       </div>  
     </div>
 
@@ -33,13 +33,14 @@
         const app = Vue.createApp({
             data() {
             return {
-                matrix: [],
-                gameMatrix: [],
-                flagged: false,
-                initialized: false,
-                gameOver: false,
-                rows: 25,
-                cols: 25,
+                matrix: [], // Pommidega ja väärtustega mänguväli
+                gameMatrix: [], // Nähtav mänguväli
+                flagged: false, // Kas mängija paneb lipu maha
+                initialized: false, // Kas mäng on alustatud või mitte
+                gameOver: false, // Kas mäng on läbi
+                rows: 25, // mänguvälja ridade arv
+                cols: 25, // mänguvälja veergude arv
+                bombPercent: 0.7, // Kui suur võimalus, et ruut ei ole pomm
             };
             },
             methods: {
@@ -49,11 +50,13 @@
               // cols        : mänguvälja veergude arv
               // startingRow : algus y kordinaat
               // startingCol : algus x kordinaat
-              generateGame(rows, cols, startingRow, startingCol) {
-
-                // loob algse mängu kus 60% on pommid (väärtus 9), teised ruudud alguses 0
+              generateGame(startingRow, startingCol) {
+                var rows = this.rows;
+                var cols = this.cols;
+                // loob algse mängu kus bombPercent näitab mitu protsenti on igal ruudul võimalus, 
+                // et nad ei ole pommid (väärtus 9), teised ruudud alguses 0
                 var matrix = Array.from({ length: rows }, () =>
-                  Array.from({ length: cols }, (value) => (Math.random() >= 0.6) && value != 10 ? 9 : 0)
+                  Array.from({ length: cols }, () => (Math.random() >= this.bombPercent) ? 9 : 0)
                 );
                 
                 // tühjendab pommidest alguse ruudust kõik ümbritsevad  
@@ -111,11 +114,11 @@
 
                 // Kui mäng ei ole alustatud siis genereerib mängu
                 if (!this.initialized) {
-                  this.generateGame(25, 25, row, cell)
+                  this.generateGame(row, cell)
                   this.initialized = true; // Mäng on alustatud
 
                   // Ja avaldab algusruudu ümbritsevad väärtused
-                  this.buttonSurroundig(row, cell, 25, 25);
+                  this.buttonSurroundig(row, cell);
                   return;
                 }
                 
@@ -129,6 +132,11 @@
                 
                 // asendab nähtavale ruudu mida vajutati
                 this.gameMatrix[row][cell] = this.matrix[row][cell];
+
+                // Kui ruudu väärtus on 0 ehk tal ei ole ühtegi pommi ümber siis vajutab ka kõik ümbritsevaid
+                if (this.gameMatrix[row][cell] == 0) {
+                  this.buttonSurroundig(row,cell)
+                }
               },
 
               // Vajutab kõiki ümbritsevaid ruute
@@ -136,7 +144,9 @@
               // startingCol : muudetava ruudu x kordinaat
               // rows        : mänguvälja ridade arv
               // cols        : mänguvälja veergude arv
-              buttonSurroundig(startingRow, startingCol, rows, cols) {
+              buttonSurroundig(startingRow, startingCol) {
+                var rows = this.rows;
+                var cols = this.cols;
                 // Liigub läbi kõik kordinaadi ümbritsevad ruudud
                 // Math.max ja Math.min vajalik, et indeksid ei oleks alla 0 või suurem mänguväljast
                 for (let row = Math.max(0, startingRow - 1); row <= Math.min(rows - 1, startingRow + 1); row++) {
@@ -146,7 +156,7 @@
                         this.buttonPressed(row, cell);
                         // Kui ruudu väärtus on 0 ehk pole ümbritsevaid pomme, tühendab ka tema ümberlt
                         if (this.gameMatrix[row][cell] == 0) {
-                          this.buttonSurroundig(row, cell, 25, 25)
+                          this.buttonSurroundig(row, cell)
                         }
                       }
                     }
@@ -156,7 +166,9 @@
               // Taastab mängu algseisundisse
               // rows : mänguvälja ridade arv
               // cols : mänguvälja veergude arv
-              refresh(rows, cols) {
+              refresh() {
+                var rows = this.rows;
+                var cols = this.cols;
                 // Nähtava mänguvälja kõik väärtused 0-iks suuruselt rows x cols
                 this.gameMatrix = Array.from({ length: rows }, () => Array.from({ length: cols }, () => 10));
                 this.initialized = false; // mäng pole alustatud
@@ -171,7 +183,7 @@
             },
             async created() {
               // Loob nähtava mänguvälja
-              this.refresh(this.rows,this.cols);
+              this.refresh();
             },
         });
 
