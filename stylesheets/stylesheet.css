@@ -14,8 +14,9 @@ a{
 /* Siit algab NAV BAR */
 
 nav{
-    background-color: lightgrey;
+    background-color: rgb(15, 15, 15);
     padding: 20px 0px;
+    border-bottom: solid 3px white;
 
     /* See osa on, et nav bar liiguks page-ga kaasa */
     position: fixed;
@@ -35,14 +36,18 @@ nav ul{
 
 nav ul li a{
     display: inline-block;
-    color: black;
+    color: white;
     font-size: x-large;
     font-weight: bold;
+    padding: 5px;
 }
 
 nav ul li a:hover {
     background-color: #575757;
+    border-radius: 20%;
 }
+
+
 
 
 /* Siit algab HEADER*/
@@ -54,39 +59,40 @@ header{
     height: 400px;
 
     /* Siin lisan tagatausta ja katsetan opacitiga veel */
-    background-image: url("../Pildid/Home_page_pildid/minesweeper_untouched.png");
+    background-image: url("../Pildid/banner.png");
     background-color: rgba(0, 0, 0, 0);
     background-blend-mode: overlay;
     background-size: cover;
 
     /* see on, et nav bar ei oleks headeri peal */
     position: relative;
-    margin-top: 65px;
+    margin-top: 45px;
 
     /* boarder */
-    border-bottom: solid 10px darkgrey;
-    border-top:solid 15px darkgrey ;
+    border-bottom: solid 3px rgb(255, 255, 255);
+    border-top:solid 15px rgb(255, 255, 255) ;
 
     /* Liigutan tiitli keskele */
     display: flex;
     justify-content: center; 
+    align-items: center;
 
 }
  
 
 header h1{
-    color: black;
-    background-color: darkgrey;
-    margin-top: 30px;
+    color: white;
+    background-color: black;
     height: 75px;
     width: 600px;
+    padding: 10px;
 }
 
 /* Siit algab MAIN*/
 main{
-    background-color: #575757;
+    background-color: black;
     padding: 20px 20px;
-    color: aliceblue;
+    color: white;
 
     
 }
@@ -130,7 +136,7 @@ main{
 
 .reinu_kirjeldus h3, .mihkli_kirjeldus h3{
     margin-bottom: 20px;
-    color: lightblue;
+    color: white;
 }
 
 .reinu_kirjeldus{
@@ -138,8 +144,12 @@ main{
 }
 /* Siit algab FOOTER*/
 
+.mihkli_kirjeldus{
+    margin-bottom: 20px;
+}
 footer{
     padding: 20px 20px;
-    background-color:grey;
+    color: white;
+    background-color: rgb(15, 15, 15);
 }
 
