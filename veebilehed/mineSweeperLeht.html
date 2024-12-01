@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../stylesheets/mineSweeper.css">
+    <title>MineSweeper!</title>
+  </head>
+  <body>
+    <div class="outer-line">
+      <div class="center" id="app">
+        <table class="matrix">
+            <button :class="['flagged', `reset-and-flag-${flagged}`]" @click="flagToggle()">Flag button</button>
+            <tr v-for="(row, rowIndex) in gameMatrix" :key="row">
+                <td v-for="(cell, colsIndex) in row" ::key="cell">
+                    <button v-if="cell == 10" class="matrix-10" @click="buttonPressed(rowIndex, colsIndex)">0</button>
+                    <button v-else-if="cell == 11" class="matrix-11" @click="buttonPressed(rowIndex, colsIndex)">0</button>
+                    <button v-else-if="cell == 9" class="matrix-9" disabled>0</button>
+                    <button v-else :class="['cell', `matrix-${cell}`]" disabled>{{cell}}</button>
+                </td>
+            </tr>
+        </table>
+        <h1 v-if="gameOver" class="gameover">GAME OVER</h1>
+        <button class="reset-and-flag-false" @click="refresh()">Refresh</button>
+      </div>  
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const app = Vue.createApp({
+            data() {
+            return {
+                matrix: [], // Pommidega ja väärtustega mänguväli
+                gameMatrix: [], // Nähtav mänguväli
+                flagged: false, // Kas mängija paneb lipu maha
+                initialized: false, // Kas mäng on alustatud või mitte
+                gameOver: false, // Kas mäng on läbi
+                rows: 25, // mänguvälja ridade arv
+                cols: 25, // mänguvälja veergude arv
+                bombPercent: 0.7, // Kui suur võimalus, et ruut ei ole pomm
+            };
+            },
+            methods: {
+
+              // Genereerib mängu pärast esimest vajutust
+              // rows        : mänguvälja ridade arv
+              // cols        : mänguvälja veergude arv
+              // startingRow : algus y kordinaat
+              // startingCol : algus x kordinaat
+              generateGame(startingRow, startingCol) {
+                var rows = this.rows;
+                var cols = this.cols;
+                // loob algse mängu kus bombPercent näitab mitu protsenti on igal ruudul võimalus, 
+                // et nad ei ole pommid (väärtus 9), teised ruudud alguses 0
+                var matrix = Array.from({ length: rows }, () =>
+                  Array.from({ length: cols }, () => (Math.random() >= this.bombPercent) ? 9 : 0)
+                );
+                
+                // tühjendab pommidest alguse ruudust kõik ümbritsevad  
+                for (let row = Math.max(0, startingRow - 1); row <= Math.min(rows - 1, startingRow + 1); row++) {
+                  for (let col = Math.max(0, startingCol - 1); col <= Math.min(cols - 1, startingCol + 1); col++) {
+                    matrix[row][col] = 0;
+                  }
+                }
+
+                // Igale pommile kõrval olevale ruudule + 1 iga pommi kohta
+                // Liigub igast ruudust üle
+                for (var row = 0; row < matrix.length; row++) {
+                  for (var column = 0; column < matrix[row].length; column++) {
+                    // Kui ruudu väärtus on 9 ehk pomm, lisab ümbritsevatele väärtustele ühe juurde
+                    if (matrix[row][column] == 9) {
+                      // Vajalik on võttad nii, et indeksid ei lähe alla 0 või üle mänguvälja suuruse
+                      for (
+                        var rowMin = Math.max(0, row - 1); 
+                        rowMin <= Math.min(rows - 1, row + 1); 
+                        rowMin++
+                      ) {
+                        for (
+                          var columnMin = Math.max(0, column - 1); 
+                          columnMin <= Math.min(cols - 1, column + 1); 
+                          columnMin++
+                        ) {
+                          // ei suurenda pommi väärtust, ehk 9
+                          if (matrix[rowMin][columnMin] != 9 && !(rowMin === row && columnMin === column)) {
+                            matrix[rowMin][columnMin]++;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                this.matrix = matrix;
+              },
+              
+              // Muudab nähtava väärtuse tema päris väärtuseks või paneb lipu sellele ruudule
+              // row  : muudetava ruudu y kordinaat
+              // cell : muudetava ruudu x kordinaat
+              buttonPressed(row, cell) {
+                // Kui flagged on true siis paneb lipu (väärtus 11)
+                if (this.flagged) {
+                  // Või kui seal on juba lipp, võtab ära
+                  if (this.gameMatrix[row][cell] == 11) {
+                    // tava ruudu väärtus on 10
+                    this.gameMatrix[row][cell] = 10;
+                    return;
+                  }
+
+                  this.gameMatrix[row][cell] = 11;
+                  return;
+                }
+
+                // Kui mäng ei ole alustatud siis genereerib mängu
+                if (!this.initialized) {
+                  this.generateGame(row, cell)
+                  this.initialized = true; // Mäng on alustatud
+
+                  // Ja avaldab algusruudu ümbritsevad väärtused
+                  this.buttonSurroundig(row, cell);
+                  return;
+                }
+                
+                // Kui ruudu väärtus on 9 ehk pomm siis mäng on läbi
+                if (this.matrix[row][cell] == 9) {
+                  // Ja avaldab terve mängu ruudustiku
+                  this.gameMatrix = this.matrix;
+                  this.gameOver = true;
+                  return;
+                }
+                
+                // asendab nähtavale ruudu mida vajutati
+                this.gameMatrix[row][cell] = this.matrix[row][cell];
+
+                // Kui ruudu väärtus on 0 ehk tal ei ole ühtegi pommi ümber siis vajutab ka kõik ümbritsevaid
+                if (this.gameMatrix[row][cell] == 0) {
+                  this.buttonSurroundig(row,cell)
+                }
+              },
+
+              // Vajutab kõiki ümbritsevaid ruute
+              // startingRow : muudetava ruudu y kordinaat
+              // startingCol : muudetava ruudu x kordinaat
+              // rows        : mänguvälja ridade arv
+              // cols        : mänguvälja veergude arv
+              buttonSurroundig(startingRow, startingCol) {
+                var rows = this.rows;
+                var cols = this.cols;
+                // Liigub läbi kõik kordinaadi ümbritsevad ruudud
+                // Math.max ja Math.min vajalik, et indeksid ei oleks alla 0 või suurem mänguväljast
+                for (let row = Math.max(0, startingRow - 1); row <= Math.min(rows - 1, startingRow + 1); row++) {
+                    for (let cell = Math.max(0, startingCol - 1); cell <= Math.min(cols - 1, startingCol + 1); cell++) {
+                      // Kui väärtus on vajutatav ruut või lipp siis vajutab nuppu
+                      if (this.gameMatrix[row][cell] >= 10) {
+                        this.buttonPressed(row, cell);
+                        // Kui ruudu väärtus on 0 ehk pole ümbritsevaid pomme, tühendab ka tema ümberlt
+                        if (this.gameMatrix[row][cell] == 0) {
+                          this.buttonSurroundig(row, cell)
+                        }
+                      }
+                    }
+                  }
+              },
+
+              // Taastab mängu algseisundisse
+              // rows : mänguvälja ridade arv
+              // cols : mänguvälja veergude arv
+              refresh() {
+                var rows = this.rows;
+                var cols = this.cols;
+                // Nähtava mänguvälja kõik väärtused 0-iks suuruselt rows x cols
+                this.gameMatrix = Array.from({ length: rows }, () => Array.from({ length: cols }, () => 10));
+                this.initialized = false; // mäng pole alustatud
+                this.gameOver = false; // mäng ei ole läbi
+              },
+
+              // Muudab flagged väärtust ehk aktiveerib või deaktiveerib lipu maha panemist
+              flagToggle() {
+                this.flagged = !this.flagged;
+              },
+
+            },
+            async created() {
+              // Loob nähtava mänguvälja
+              this.refresh();
+            },
+        });
+
+        app.mount('#app');
+        });
+    </script>
+  </body>
+</html>
